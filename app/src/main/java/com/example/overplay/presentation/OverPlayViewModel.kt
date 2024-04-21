@@ -39,9 +39,6 @@ class OverPlayViewModel @Inject constructor(
 
     fun getExoplayer() = exoPlayer
 
-    fun getVideoUrl() =
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4 "
-
     override fun onSensorChanged(event: SensorEvent?) {
         when (event?.sensor?.type) {
             Sensor.TYPE_ACCELEROMETER -> if (isShakeEvent(

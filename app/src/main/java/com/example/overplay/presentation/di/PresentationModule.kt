@@ -2,6 +2,7 @@ package com.example.overplay.presentation.di
 
 import android.content.Context
 import android.hardware.SensorManager
+import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.Module
 import dagger.Provides
@@ -17,7 +18,15 @@ object PresentationModule {
     @Provides
     @Singleton
     fun provideExoPlayer(@ApplicationContext context: Context) =
-        ExoPlayer.Builder(context).build()
+        ExoPlayer.Builder(context).build().apply {
+            setMediaItem(
+                MediaItem.fromUri(
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4 "
+                )
+            )
+            prepare()
+            playWhenReady = true
+        }
 
     @Provides
     @Singleton

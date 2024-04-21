@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.C.VOLUME_FLAG_SHOW_UI
-import androidx.media3.common.MediaItem
 import androidx.media3.ui.PlayerView
 import com.example.overplay.presentation.OverPlayViewModel.UiEvent
 
@@ -20,13 +19,7 @@ fun OverPlayScreen(
     val uiEvent by viewModel.uiEvent.collectAsState()
 
     // TODO Use effect (launch or dispose)?
-    val exoPlayer = remember {
-        viewModel.getExoplayer().apply {
-            setMediaItem(MediaItem.fromUri(viewModel.getVideoUrl()))
-            prepare()
-            playWhenReady = true
-        }
-    }
+    val exoPlayer = remember { viewModel.getExoplayer() }
 
     when (uiEvent) {
         UiEvent.ShakeEvent ->
