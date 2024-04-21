@@ -1,6 +1,5 @@
 package com.example.overplay
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -9,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.C.VOLUME_FLAG_SHOW_UI
 import androidx.media3.common.MediaItem
 import androidx.media3.ui.PlayerView
 import com.example.overplay.OverPlayViewModel.UiEvent
@@ -22,19 +22,21 @@ fun OverPlayScreen(
     // TODO Use effect (launch or dispose)?
     val exoPlayer = remember {
         viewModel.getExoplayer().apply {
-            setMediaItem(MediaItem.fromUri(viewModel.getViedeoUrl()))
+            setMediaItem(MediaItem.fromUri(viewModel.getVideoUrl()))
             prepare()
             playWhenReady = true
         }
     }
 
     when (uiEvent) {
-        UiEvent.ShakeEvent -> {
-            Column(modifier = Modifier.fillMaxSize()) {
-                exoPlayer.pause()
-            }
-        }
+        UiEvent.ShakeEvent ->
+            exoPlayer.pause()
 
+        is UiEvent.IncreaseDeviceVolume -> exoPlayer.increaseDeviceVolume(VOLUME_FLAG_SHOW_UI)
+        is UiEvent.DecreaseDeviceVolume -> exoPlayer.decreaseDeviceVolume(VOLUME_FLAG_SHOW_UI)
+
+        is UiEvent.SeekForward -> if (exoPlayer.isPlaying) exoPlayer.seekForward()
+        is UiEvent.SeekBackward -> if (exoPlayer.isPlaying) exoPlayer.seekBack()
         else -> {}
     }
 

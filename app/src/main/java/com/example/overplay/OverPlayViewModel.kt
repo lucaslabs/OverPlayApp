@@ -19,8 +19,10 @@ class OverPlayViewModel @Inject constructor(
 
     init {
         val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        val gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL)
     }
 
     private var acceleration = 10f
@@ -37,7 +39,7 @@ class OverPlayViewModel @Inject constructor(
 
     fun getExoplayer() = exoPlayer
 
-    fun getViedeoUrl() =
+    fun getVideoUrl() =
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4 "
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -49,6 +51,16 @@ class OverPlayViewModel @Inject constructor(
                 )
             ) {
                 uiEvent.value = UiEvent.ShakeEvent
+            }
+
+            Sensor.TYPE_GYROSCOPE -> {
+                val xAxis = event.values[0]
+                if (xAxis > 0) uiEvent.value = UiEvent.IncreaseDeviceVolume
+                if (xAxis < 0) uiEvent.value = UiEvent.DecreaseDeviceVolume
+
+                val zAxis = event.values[2]
+                if (zAxis < 0) uiEvent.value = UiEvent.SeekForward
+                if (zAxis > 0) uiEvent.value = UiEvent.SeekBackward
             }
         }
     }
@@ -70,5 +82,9 @@ class OverPlayViewModel @Inject constructor(
 
     sealed class UiEvent {
         data object ShakeEvent : UiEvent()
+        data object IncreaseDeviceVolume : UiEvent()
+        data object DecreaseDeviceVolume : UiEvent()
+        data object SeekForward : UiEvent()
+        data object SeekBackward : UiEvent()
     }
 }
