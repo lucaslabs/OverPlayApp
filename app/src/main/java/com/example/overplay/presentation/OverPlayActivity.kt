@@ -1,4 +1,4 @@
-package com.example.overplay
+package com.example.overplay.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.overplay.ui.theme.OverPlayTheme
+import com.example.overplay.presentation.theme.OverPlayTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -1,4 +1,4 @@
-package com.example.overplay
+package com.example.overplay.presentation.di
 
 import android.content.Context
 import android.hardware.SensorManager

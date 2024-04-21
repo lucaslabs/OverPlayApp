@@ -1,4 +1,4 @@
-package com.example.overplay
+package com.example.overplay.presentation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -11,7 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.C.VOLUME_FLAG_SHOW_UI
 import androidx.media3.common.MediaItem
 import androidx.media3.ui.PlayerView
-import com.example.overplay.OverPlayViewModel.UiEvent
+import com.example.overplay.presentation.OverPlayViewModel.UiEvent
 
 @Composable
 fun OverPlayScreen(

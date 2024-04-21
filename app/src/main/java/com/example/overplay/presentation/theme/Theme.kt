@@ -1,4 +1,4 @@
-package com.example.overplay.ui.theme
+package com.example.overplay.presentation.theme
 
 import android.app.Activity
 import android.os.Build
