@@ -1,27 +1,43 @@
 package com.example.overplay
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.ui.PlayerView
+import com.example.overplay.OverPlayViewModel.UiEvent
 
 @Composable
 fun OverPlayScreen(
     viewModel: OverPlayViewModel = hiltViewModel()
 ) {
+    val uiEvent by viewModel.uiEvent.collectAsState()
 
     // TODO Use effect (launch or dispose)?
     val exoPlayer = remember {
         viewModel.getExoplayer().apply {
-            setMediaItem(MediaItem.fromUri("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4 "))
+            setMediaItem(MediaItem.fromUri(viewModel.getViedeoUrl()))
             prepare()
             playWhenReady = true
         }
     }
+
+    when (uiEvent) {
+        UiEvent.ShakeEvent -> {
+            Column(modifier = Modifier.fillMaxSize()) {
+                exoPlayer.pause()
+            }
+        }
+
+        else -> {}
+    }
+
 
     AndroidView(
         modifier = Modifier.fillMaxSize(),

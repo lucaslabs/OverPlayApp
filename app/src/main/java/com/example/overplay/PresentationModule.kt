@@ -1,6 +1,7 @@
 package com.example.overplay
 
 import android.content.Context
+import android.hardware.SensorManager
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.Module
 import dagger.Provides
@@ -17,4 +18,9 @@ object PresentationModule {
     @Singleton
     fun provideExoPlayer(@ApplicationContext context: Context) =
         ExoPlayer.Builder(context).build()
+
+    @Provides
+    @Singleton
+    fun provideSensorManager(@ApplicationContext context: Context) =
+        context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 }
