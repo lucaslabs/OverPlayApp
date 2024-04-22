@@ -29,7 +29,7 @@ class OverPlayViewModel @Inject constructor(
 ) : ViewModel(), SensorEventListener {
 
     companion object {
-        private const val MIN_TIME_BETWEEN_EVENTS_MILLISECS = 1000
+        private const val MIN_TIME_BETWEEN_EVENTS_MILLISECS = 1000L
         private const val SHAKE_THRESHOLD = 3.25f
         private const val X_AXIS_THRESHOLD = 0.5f
         private const val Z_AXIS_THRESHOLD = 0.5f
