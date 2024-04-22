@@ -91,9 +91,9 @@ class OverPlayViewModel @Inject constructor(
     override fun onSensorChanged(event: SensorEvent?) {
         val currentTimeMillis = System.currentTimeMillis()
 
-        when (event?.sensor?.type) {
-            Sensor.TYPE_ACCELEROMETER -> {
-                if ((currentTimeMillis - lastEventTime) > MIN_TIME_BETWEEN_EVENTS_MILLISECS) {
+        if ((currentTimeMillis - lastEventTime) > MIN_TIME_BETWEEN_EVENTS_MILLISECS) {
+            when (event?.sensor?.type) {
+                Sensor.TYPE_ACCELEROMETER -> {
                     if (isShaking(
                             xAxis = event.values[0],
                             yAxis = event.values[1],
@@ -105,10 +105,8 @@ class OverPlayViewModel @Inject constructor(
                         uiEvent.value = UiEvent.ShakeEvent
                     }
                 }
-            }
 
-            Sensor.TYPE_GYROSCOPE -> {
-                if ((currentTimeMillis - lastEventTime) > MIN_TIME_BETWEEN_EVENTS_MILLISECS) {
+                Sensor.TYPE_GYROSCOPE -> {
                     lastEventTime = currentTimeMillis
 
                     val xAxis = event.values[0]
@@ -140,9 +138,9 @@ class OverPlayViewModel @Inject constructor(
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
     private fun isShaking(xAxis: Float, yAxis: Float, zAxis: Float): Boolean {
-        val acceleration =
+        val linearAcceleration =
             sqrt(xAxis * xAxis + yAxis * yAxis + zAxis * zAxis) - SensorManager.GRAVITY_EARTH
-        return acceleration > SHAKE_THRESHOLD
+        return linearAcceleration > SHAKE_THRESHOLD
     }
 
     override fun onCleared() {
