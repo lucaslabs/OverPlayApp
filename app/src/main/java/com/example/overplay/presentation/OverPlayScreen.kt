@@ -69,7 +69,7 @@ fun OverPlayScreen(
         }
     }
 
-    // Handle shake, rotation, and location events
+    // Handle shake, volume, seek, and location events
     if (exoPlayer.isPlaying) {
         when (val event = uiEvent) {
             UiEvent.ShakeEvent -> exoPlayer.pause()
