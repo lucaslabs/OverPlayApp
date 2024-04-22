@@ -25,8 +25,6 @@ object PresentationModule {
                     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4"
                 )
             )
-            prepare()
-            playWhenReady = true
         }
 
     @Provides
