@@ -27,6 +27,7 @@ class OverPlayViewModel @Inject constructor(
         private const val SHAKE_THRESHOLD = 3.25f
         private const val X_AXIS_THRESHOLD = 0.5f
         private const val Z_AXIS_THRESHOLD = 0.5f
+        private const val VOLUME_DELTA = 0.1f
         private const val LOCATION_INTERVAL_UPDATE = 10000 // 10 secs
     }
 
@@ -104,12 +105,26 @@ class OverPlayViewModel @Inject constructor(
                     lastEventTime = currentTimeMillis
 
                     val xAxis = event.values[0]
-                    if (xAxis > X_AXIS_THRESHOLD) uiEvent.value = UiEvent.IncreaseDeviceVolume
-                    if (xAxis < -X_AXIS_THRESHOLD) uiEvent.value = UiEvent.DecreaseDeviceVolume
+                    if (xAxis > X_AXIS_THRESHOLD) {
+                        uiEvent.value = UiEvent.IncreaseDeviceVolume()
+                        return
+                    }
+
+                    if (xAxis < -X_AXIS_THRESHOLD) {
+                        uiEvent.value = UiEvent.DecreaseDeviceVolume()
+                        return
+                    }
 
                     val zAxis = event.values[2]
-                    if (zAxis > Z_AXIS_THRESHOLD) uiEvent.value = UiEvent.SeekBackward
-                    if (zAxis < -Z_AXIS_THRESHOLD) uiEvent.value = UiEvent.SeekForward
+                    if (zAxis > Z_AXIS_THRESHOLD) {
+                        uiEvent.value = UiEvent.SeekBackward
+                        return
+                    }
+
+                    if (zAxis < -Z_AXIS_THRESHOLD) {
+                        uiEvent.value = UiEvent.SeekForward
+                        return
+                    }
                 }
             }
         }
@@ -130,8 +145,8 @@ class OverPlayViewModel @Inject constructor(
 
     sealed class UiEvent {
         data object ShakeEvent : UiEvent()
-        data object IncreaseDeviceVolume : UiEvent()
-        data object DecreaseDeviceVolume : UiEvent()
+        data class IncreaseDeviceVolume(val delta: Float = VOLUME_DELTA) : UiEvent()
+        data class DecreaseDeviceVolume(val delta: Float = VOLUME_DELTA) : UiEvent()
         data object SeekForward : UiEvent()
         data object SeekBackward : UiEvent()
         data object LocationChanged : UiEvent()

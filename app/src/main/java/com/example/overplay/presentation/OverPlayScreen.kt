@@ -18,7 +18,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.media3.common.C.VOLUME_FLAG_SHOW_UI
 import androidx.media3.ui.PlayerView
 import com.example.overplay.presentation.OverPlayViewModel.UiEvent
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -59,27 +58,29 @@ fun OverPlayScreen(
                 else -> Unit
             }
         }
+
         lifecycle.addObserver(observer)
+
         onDispose {
             lifecycle.removeObserver(observer)
         }
     }
 
     if (exoPlayer.isPlaying) {
-        when (uiEvent) {
+        when (val event = uiEvent) {
             UiEvent.ShakeEvent -> exoPlayer.pause()
 
-            UiEvent.IncreaseDeviceVolume -> exoPlayer.increaseDeviceVolume(VOLUME_FLAG_SHOW_UI)
-            UiEvent.DecreaseDeviceVolume -> exoPlayer.decreaseDeviceVolume(VOLUME_FLAG_SHOW_UI)
+            is UiEvent.IncreaseDeviceVolume -> exoPlayer.volume += event.delta
+            is UiEvent.DecreaseDeviceVolume -> exoPlayer.volume -= event.delta
 
             UiEvent.SeekForward -> exoPlayer.seekForward()
             UiEvent.SeekBackward -> exoPlayer.seekBack()
 
-            UiEvent.LocationChanged ->
-                exoPlayer.apply {
-                    seekTo(0)
-                    playWhenReady = true
-                }
+//            UiEvent.LocationChanged ->
+//                exoPlayer.apply {
+//                    seekTo(0)
+//                    playWhenReady = true
+//                }
 
             else -> Unit
         }
