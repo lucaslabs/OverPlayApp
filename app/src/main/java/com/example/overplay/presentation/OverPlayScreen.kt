@@ -35,6 +35,7 @@ fun OverPlayScreen(
 
     val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
 
+    // Handle lifecycle events
     DisposableEffect(lifecycleOwner) {
         val lifecycle = lifecycleOwner.lifecycle
         val observer = LifecycleEventObserver { _, event ->
@@ -68,6 +69,7 @@ fun OverPlayScreen(
         }
     }
 
+    // Handle shake, rotation, and location events
     if (exoPlayer.isPlaying) {
         when (val event = uiEvent) {
             UiEvent.ShakeEvent -> exoPlayer.pause()
@@ -88,6 +90,7 @@ fun OverPlayScreen(
         }
     }
 
+    // Handle location permission request
     val locationPermissions = rememberMultiplePermissionsState(
         permissions = listOf(
             android.Manifest.permission.ACCESS_COARSE_LOCATION,
