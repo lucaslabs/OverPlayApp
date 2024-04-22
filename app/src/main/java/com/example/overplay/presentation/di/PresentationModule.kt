@@ -4,6 +4,7 @@ import android.content.Context
 import android.hardware.SensorManager
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,7 +22,7 @@ object PresentationModule {
         ExoPlayer.Builder(context).build().apply {
             setMediaItem(
                 MediaItem.fromUri(
-                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4 "
+                    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4"
                 )
             )
             prepare()
@@ -32,4 +33,9 @@ object PresentationModule {
     @Singleton
     fun provideSensorManager(@ApplicationContext context: Context) =
         context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+    @Provides
+    @Singleton
+    fun provideFusedLocationProviderClient(@ApplicationContext context: Context) =
+        LocationServices.getFusedLocationProviderClient(context)
 }
