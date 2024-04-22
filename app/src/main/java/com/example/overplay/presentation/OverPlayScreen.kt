@@ -27,23 +27,24 @@ fun OverPlayScreen(
 
     val exoPlayer = remember { viewModel.getExoplayer() }
 
-    when (uiEvent) {
-        UiEvent.ShakeEvent -> if (exoPlayer.isPlaying) exoPlayer.pause()
+    if (exoPlayer.isPlaying) {
+        when (uiEvent) {
+            UiEvent.ShakeEvent -> exoPlayer.pause()
 
-        UiEvent.IncreaseDeviceVolume -> exoPlayer.increaseDeviceVolume(VOLUME_FLAG_SHOW_UI)
-        UiEvent.DecreaseDeviceVolume -> exoPlayer.decreaseDeviceVolume(VOLUME_FLAG_SHOW_UI)
+            UiEvent.IncreaseDeviceVolume -> exoPlayer.increaseDeviceVolume(VOLUME_FLAG_SHOW_UI)
+            UiEvent.DecreaseDeviceVolume -> exoPlayer.decreaseDeviceVolume(VOLUME_FLAG_SHOW_UI)
 
-        UiEvent.SeekForward -> if (exoPlayer.isPlaying) exoPlayer.seekForward()
-        UiEvent.SeekBackward -> if (exoPlayer.isPlaying) exoPlayer.seekBack()
+            UiEvent.SeekForward -> exoPlayer.seekForward()
+            UiEvent.SeekBackward -> exoPlayer.seekBack()
 
-        UiEvent.LocationChanged -> if (exoPlayer.isPlaying) {
-            exoPlayer.apply {
-                seekTo(0)
-                playWhenReady = true
-            }
+            UiEvent.LocationChanged ->
+                exoPlayer.apply {
+                    seekTo(0)
+                    playWhenReady = true
+                }
+
+            else -> Unit
         }
-
-        else -> {}
     }
 
 //    val locationPermissions = rememberMultiplePermissionsState(

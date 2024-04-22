@@ -23,12 +23,14 @@ class OverPlayViewModel @Inject constructor(
 ) : ViewModel(), SensorEventListener {
 
     companion object {
+        private const val MIN_TIME_BETWEEN_EVENTS_MILLISECS = 1000
         private const val SHAKE_THRESHOLD = 3.25f
-        private const val MIN_TIME_BETWEEN_SHAKES_MILLISECS = 1000
+        private const val X_AXIS_THRESHOLD = 0.5f
+        private const val Z_AXIS_THRESHOLD = 0.5f
         private const val LOCATION_INTERVAL_UPDATE = 10000 // 10 secs
     }
 
-    private var lastShakeTime: Long = 0
+    private var lastEventTime: Long = 0
     private var currentLocation: Location? = null
     private var lastLocation: Location? = null
 
@@ -42,8 +44,8 @@ class OverPlayViewModel @Inject constructor(
         // For shake event
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
 
-//        // For volume and seek video events
-//        sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL)
+        // For volume and seek video events
+        sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL)
 //
 //        // For location changed event
 //        val locationRequest = LocationRequest.Builder(
@@ -79,30 +81,36 @@ class OverPlayViewModel @Inject constructor(
     fun showDebugEvent() = true
 
     override fun onSensorChanged(event: SensorEvent?) {
+        val currentTimeMillis = System.currentTimeMillis()
+
         when (event?.sensor?.type) {
             Sensor.TYPE_ACCELEROMETER -> {
-                val currentTimeMillis = System.currentTimeMillis()
-                if ((currentTimeMillis - lastShakeTime) > MIN_TIME_BETWEEN_SHAKES_MILLISECS) {
+                if ((currentTimeMillis - lastEventTime) > MIN_TIME_BETWEEN_EVENTS_MILLISECS) {
                     if (isShaking(
                             xAxis = event.values[0],
                             yAxis = event.values[1],
                             zAxis = event.values[2]
                         )
                     ) {
-                        lastShakeTime = currentTimeMillis
+                        lastEventTime = currentTimeMillis
+
                         uiEvent.value = UiEvent.ShakeEvent
                     }
                 }
             }
 
             Sensor.TYPE_GYROSCOPE -> {
-                val xAxis = event.values[0]
-                if (xAxis > 1.0f) uiEvent.value = UiEvent.IncreaseDeviceVolume
-                if (xAxis < 1.0f) uiEvent.value = UiEvent.DecreaseDeviceVolume
+                if ((currentTimeMillis - lastEventTime) > MIN_TIME_BETWEEN_EVENTS_MILLISECS) {
+                    lastEventTime = currentTimeMillis
 
-                val zAxis = event.values[2]
-                if (zAxis < 1.0f) uiEvent.value = UiEvent.SeekForward
-                if (zAxis > 1.0f) uiEvent.value = UiEvent.SeekBackward
+                    val xAxis = event.values[0]
+                    if (xAxis > X_AXIS_THRESHOLD) uiEvent.value = UiEvent.IncreaseDeviceVolume
+                    if (xAxis < -X_AXIS_THRESHOLD) uiEvent.value = UiEvent.DecreaseDeviceVolume
+
+                    val zAxis = event.values[2]
+                    if (zAxis > Z_AXIS_THRESHOLD) uiEvent.value = UiEvent.SeekBackward
+                    if (zAxis < -Z_AXIS_THRESHOLD) uiEvent.value = UiEvent.SeekForward
+                }
             }
         }
     }
