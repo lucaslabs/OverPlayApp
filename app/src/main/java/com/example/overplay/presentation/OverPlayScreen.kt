@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.ui.PlayerView
 import com.example.overplay.presentation.OverPlayViewModel.UiEvent
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -76,26 +78,26 @@ fun OverPlayScreen(
             UiEvent.SeekForward -> exoPlayer.seekForward()
             UiEvent.SeekBackward -> exoPlayer.seekBack()
 
-//            UiEvent.LocationChanged ->
-//                exoPlayer.apply {
-//                    seekTo(0)
-//                    playWhenReady = true
-//                }
+            UiEvent.LocationChanged ->
+                exoPlayer.apply {
+                    seekTo(0)
+                    playWhenReady = true
+                }
 
             else -> Unit
         }
     }
 
-//    val locationPermissions = rememberMultiplePermissionsState(
-//        permissions = listOf(
-//            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-//            android.Manifest.permission.ACCESS_FINE_LOCATION
-//        )
-//    )
-//
-//    LaunchedEffect(true) {
-//        locationPermissions.launchMultiplePermissionRequest()
-//    }
+    val locationPermissions = rememberMultiplePermissionsState(
+        permissions = listOf(
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    )
+
+    LaunchedEffect(true) {
+        locationPermissions.launchMultiplePermissionRequest()
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),

@@ -6,11 +6,17 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
+import android.os.Looper
 import androidx.lifecycle.ViewModel
 import androidx.media3.exoplayer.ExoPlayer
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.sqrt
 
@@ -19,7 +25,7 @@ import kotlin.math.sqrt
 class OverPlayViewModel @Inject constructor(
     private val exoPlayer: ExoPlayer,
     private val sensorManager: SensorManager,
-    private val fusedLocationProviderClient: FusedLocationProviderClient
+    fusedLocationProviderClient: FusedLocationProviderClient
 ) : ViewModel(), SensorEventListener {
 
     companion object {
@@ -28,7 +34,8 @@ class OverPlayViewModel @Inject constructor(
         private const val X_AXIS_THRESHOLD = 0.5f
         private const val Z_AXIS_THRESHOLD = 0.5f
         private const val VOLUME_DELTA = 0.1f
-        private const val LOCATION_INTERVAL_UPDATE = 10000 // 10 secs
+        private const val LOCATION_INTERVAL_UPDATE_SECS = 10L
+        private const val LOCATION_THRESHOLD_METERS = 10f // meters
     }
 
     private var lastEventTime: Long = 0
@@ -47,34 +54,34 @@ class OverPlayViewModel @Inject constructor(
 
         // For volume and seek video events
         sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL)
-//
-//        // For location changed event
-//        val locationRequest = LocationRequest.Builder(
-//            Priority.PRIORITY_BALANCED_POWER_ACCURACY,
-//            TimeUnit.SECONDS.toMillis(10)
-//        ).build()
-//
-//        val locationCallback = object : LocationCallback() {
-//            override fun onLocationResult(result: LocationResult) {
-//                super.onLocationResult(result)
-//                for (location in result.locations) {
-//                    if (lastLocation == null) lastLocation = location
-//                    currentLocation = location
-//                    currentLocation?.let { current ->
-//                        val distance: Float? = lastLocation?.distanceTo(current)
-//                        if (distance != null && distance > 10.0) {
-//                            uiEvent.value = UiEvent.LocationChanged
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        fusedLocationProviderClient.requestLocationUpdates(
-//            locationRequest,
-//            locationCallback,
-//            Looper.getMainLooper()
-//        )
+
+        // For location changed event
+        val locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+            TimeUnit.SECONDS.toMillis(LOCATION_INTERVAL_UPDATE_SECS)
+        ).build()
+
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                super.onLocationResult(result)
+                for (location in result.locations) {
+                    if (lastLocation == null) lastLocation = location
+                    currentLocation = location
+                    currentLocation?.let { current ->
+                        val distance: Float? = lastLocation?.distanceTo(current)
+                        if (distance != null && distance > LOCATION_THRESHOLD_METERS) {
+                            uiEvent.value = UiEvent.LocationChanged
+                        }
+                    }
+                }
+            }
+        }
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
     }
 
     fun getExoplayer() = exoPlayer
