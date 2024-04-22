@@ -28,7 +28,7 @@ fun OverPlayScreen(
     val exoPlayer = remember { viewModel.getExoplayer() }
 
     when (uiEvent) {
-        UiEvent.ShakeEvent -> exoPlayer.pause()
+        UiEvent.ShakeEvent -> if (exoPlayer.isPlaying) exoPlayer.pause()
 
         UiEvent.IncreaseDeviceVolume -> exoPlayer.increaseDeviceVolume(VOLUME_FLAG_SHOW_UI)
         UiEvent.DecreaseDeviceVolume -> exoPlayer.decreaseDeviceVolume(VOLUME_FLAG_SHOW_UI)
